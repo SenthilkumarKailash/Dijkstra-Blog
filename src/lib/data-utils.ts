@@ -103,7 +103,11 @@ export async function getPostsByAuthor(
   authorId: string,
 ): Promise<CollectionEntry<'blog'>[]> {
   const posts = await getAllPosts()
-  return posts.filter((post) => post.data.authors?.includes(authorId))
+  return posts.filter((post) =>
+    post.data.authors?.map((author: { id: string } | string) =>
+      typeof author === 'string' ? author : author.id
+    ).includes(authorId)
+  )
 }
 
 export async function getPostsByTag(
@@ -120,17 +124,32 @@ export async function getRecentPosts(
   return posts.slice(0, count)
 }
 
+
+//import { getAllTags } from "./data-utils" // keep this if you still use it elsewhere
+
 export async function getSortedTags(): Promise<
-  { tag: string; count: number }[]
+  { tag: string; count: number; posts: any[] }[]
 > {
-  const tagCounts = await getAllTags()
-  return [...tagCounts.entries()]
-    .map(([tag, count]) => ({ tag, count }))
+  const posts = await getCollection("blog") // replace "blog" with your actual collection name
+
+  // Build tag → posts mapping
+  const tagMap = new Map<string, any[]>()
+
+  posts.forEach((post) => {
+    ;(post.data.tags || []).forEach((tag: string) => {
+      if (!tagMap.has(tag)) tagMap.set(tag, [])
+      tagMap.get(tag)!.push(post)
+    })
+  })
+
+  return Array.from(tagMap.entries())
+    .map(([tag, posts]) => ({ tag, count: posts.length, posts }))
     .sort((a, b) => {
       const countDiff = b.count - a.count
       return countDiff !== 0 ? countDiff : a.tag.localeCompare(b.tag)
     })
 }
+
 
 export function getParentId(subpostId: string): string {
   return subpostId.split('/')[0]
