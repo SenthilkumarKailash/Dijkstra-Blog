@@ -23,6 +23,7 @@ import Search01 from "@/assets/svgs/search-01.astro";
           <Link
             href={item.href}
             class="text-foreground/60 hover:text-foreground/80 capitalize transition-colors"
+            transition:animate
           >
             {item.label}
           </Link>
@@ -81,7 +82,9 @@ import Search01 from "@/assets/svgs/search-01.astro";
           </div>
         </div>
       </div>
-      <ThemeToggle class="ml-2" transition:persist />
+
+      <ThemeToggle class="ml-2" />
+
       <!-- Profile / Auth Menu -->
       <div class="relative">
         <button
@@ -144,15 +147,14 @@ import Search01 from "@/assets/svgs/search-01.astro";
         profileDropdown.classList.toggle("hidden");
       });
 
-  document.addEventListener("click", (e) => {
-  const target = e.target;
-  if (target instanceof Node) {
-    if (!profileDropdown.contains(target) && !profileBtn.contains(target)) {
-      profileDropdown.classList.add("hidden");
-    }
-  }
-});
-
+      document.addEventListener("click", (e) => {
+        const target = e.target;
+        if (target instanceof Node) {
+          if (!profileDropdown.contains(target) && !profileBtn.contains(target)) {
+            profileDropdown.classList.add("hidden");
+          }
+        }
+      });
     }
 
     // Search overlay
@@ -244,6 +246,4 @@ import Search01 from "@/assets/svgs/search-01.astro";
     }
     #search-results a:hover { background: rgba(0,0,0,0.04); }
   </style>
-  
-
 </header>
