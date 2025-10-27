@@ -6,7 +6,6 @@ import Footer from "@/components/Footer.astro";
 import type { Entry } from "@/lib/types";
 import { getMeta } from "@/lib/utils/getMeta";
 
-
 type Props = {
   entry: Entry;
 };
@@ -17,7 +16,17 @@ const meta = await getMeta(entry);
 
 <!doctype html>
 <html class="bg-background text-foreground" lang={SITE.locale} dir={SITE.dir}>
-  <Head meta={meta} />
+  <head>
+    <!-- ✅ Prevent flashing before theme loads -->
+    <script>
+      const theme = localStorage.getItem('theme') ||
+      (window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light');
+      document.documentElement.classList.toggle('dark', theme === 'dark');
+    </script>
+
+    <Head meta={meta} />
+  </head>
+
   <body class="font-sans antialiased flex flex-col min-h-screen">
     <!-- Site Header -->
     <Header />
@@ -35,4 +44,3 @@ const meta = await getMeta(entry);
     <Footer />
   </body>
 </html>
-
