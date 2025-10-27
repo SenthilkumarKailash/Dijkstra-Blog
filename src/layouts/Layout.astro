@@ -16,29 +16,27 @@ const { class: className } = Astro.props
 
 <!doctype html>
 <html class="bg-background text-foreground" lang={SITE.locale} data-theme>
-  <!-- ✅ Prevent white flash before theme loads -->
+  <!-- ✅ Prevent theme flash -->
   <script>
     (function () {
       const stored = localStorage.getItem('theme');
       const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
       const theme = stored || (systemPrefersDark ? 'dark' : 'light');
-      if (theme === 'dark') {
-        document.documentElement.classList.add('dark');
-      } else {
-        document.documentElement.classList.remove('dark');
-      }
+      document.documentElement.classList.toggle('dark', theme === 'dark');
     })();
   </script>
 
   <head>
     <Head>
       <slot name="head" />
-      <Header />
     </Head>
   </head>
 
-  <body>
-    <div class="flex h-fit min-h-screen flex-col gap-y-6 font-sans">
+  <body class="font-sans">
+    <!-- ✅ Header moved ONLY here -->
+    <Header />
+
+    <div class="flex h-fit min-h-screen flex-col gap-y-6">
       <div class="bg-background/50 sticky top-0 z-50 divide-y backdrop-blur-sm xl:divide-none">
         <slot name="subposts-navigation" />
         <slot name="table-of-contents" />
