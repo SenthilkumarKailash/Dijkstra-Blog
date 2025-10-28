@@ -23,6 +23,7 @@ import Search01 from "@/assets/svgs/search-01.astro";
           <Link
             href={item.href}
             class="text-foreground/60 hover:text-foreground/80 capitalize transition-colors"
+            transition:animate="fade"
           >
             {item.label}
           </Link>
@@ -80,8 +81,8 @@ import Search01 from "@/assets/svgs/search-01.astro";
             </div>
           </div>
         </div>
-      </div>
-      <ThemeToggle class="ml-2" transition:persist />
+      </div>     
+      <ThemeToggle class="ml-2" />
       <!-- Profile / Auth Menu -->
       <div class="relative">
         <button
@@ -94,7 +95,7 @@ import Search01 from "@/assets/svgs/search-01.astro";
         <!-- Profile Dropdown -->
         <div
           id="profile-dropdown"
-          class="hidden absolute right-0 mt-2 w-64 rounded-xl border border-foreground/10 bg-background shadow-lg z-50"
+          class="absolute right-0 mt-2 w-64 rounded-xl border border-foreground/10 bg-background shadow-lg z-50"
         >
           <!-- User info -->
           <div class="flex items-center gap-3 p-4 border-b border-foreground/10">
@@ -140,19 +141,19 @@ import Search01 from "@/assets/svgs/search-01.astro";
     const profileDropdown = document.getElementById("profile-dropdown");
 
     if (profileBtn && profileDropdown) {
+      profileDropdown.classList.remove("active");
       profileBtn.addEventListener("click", () => {
-        profileDropdown.classList.toggle("hidden");
+        profileDropdown.classList.toggle("active");
       });
 
-  document.addEventListener("click", (e) => {
-  const target = e.target;
-  if (target instanceof Node) {
-    if (!profileDropdown.contains(target) && !profileBtn.contains(target)) {
-      profileDropdown.classList.add("hidden");
-    }
-  }
-});
-
+      document.addEventListener("click", (e) => {
+        const target = e.target;
+        if (target instanceof Node) {
+          if (!profileDropdown.contains(target) && !profileBtn.contains(target)) {
+            profileDropdown.classList.remove("active");
+          }
+        }
+      });
     }
 
     // Search overlay
@@ -163,6 +164,7 @@ import Search01 from "@/assets/svgs/search-01.astro";
     const clearBtn = document.getElementById("clear-search");
 
     const showOverlay = () => {
+      overlay.classList.add("active");
       overlay.classList.remove("invisible");
       overlay.style.opacity = 0;
       setTimeout(() => overlay.style.opacity = 1, 10);
@@ -171,7 +173,10 @@ import Search01 from "@/assets/svgs/search-01.astro";
 
     const hideOverlay = () => {
       overlay.style.opacity = 0;
-      setTimeout(() => overlay.classList.add("invisible"), 200);
+      setTimeout(() => {
+        overlay.classList.remove("active");
+        overlay.classList.add("invisible");
+      }, 200);
       overlayInput.value = "";
       resultsBox.innerHTML = "";
       headerInput.value = "";
@@ -230,6 +235,20 @@ import Search01 from "@/assets/svgs/search-01.astro";
       --pagefind-ui-background: oklch(var(--b1));
       --pagefind-ui-border: oklch(var(--b2));
     }
+
+    /* Prevent flash before JS hydration */
+    #search-overlay,
+    #profile-dropdown {
+      display: none;
+    }
+
+    #search-overlay.active {
+      display: flex;
+    }
+
+    #profile-dropdown.active {
+      display: block;
+    }
   </style>
 
   <style is:global>
@@ -244,6 +263,4 @@ import Search01 from "@/assets/svgs/search-01.astro";
     }
     #search-results a:hover { background: rgba(0,0,0,0.04); }
   </style>
-  
-
 </header>
