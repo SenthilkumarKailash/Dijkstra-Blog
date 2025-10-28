@@ -16,7 +16,6 @@ const meta = await getMeta(entry);
 
 <!doctype html>
 <html class="bg-background text-foreground" lang={SITE.locale} dir={SITE.dir} data-theme>
-  <!-- ✅ Prevent white flash before theme loads -->
   <script>
     (function () {
       const stored = localStorage.getItem('theme');
